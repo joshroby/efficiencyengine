@@ -4,13 +4,15 @@ function Game() {
 	this.currencies = [];
 	this.resources = [];
 	this.parts = [];
-	this.designs = [];
+	this.designs = {};
 	
 	this.level = 1;
 	this.colors = ['Red','Blue','Green'];
 	this.colorsQueue = ['Yellow','Orange','Purple','White','Black'];
 	this.icons = ['Coin'];
 	this.iconsQueue = ['Stone','Ingot','Gem','Crown','Sword','Shield','Cup','Diamond'];
+	
+	this.workshop = Array(5);
 	
 	this.newGame = function() {
 		for (var i = 0; i<3; i++) {
@@ -24,7 +26,7 @@ function Game() {
 		};
 		new Collider(-99,60,-99,-600,'none');
 		new Collider(99,60,99,-600,'none');
-		new Collider(-100,50,100,50,'none');
+		new Collider(-100,48,100,48,'none');
 		new Collider(-100,62,100,62,'none');
 	};
 	
@@ -39,13 +41,71 @@ function Game() {
 	};
 	
 	this.levelUp = function() {
+		new Currency();
 		if (this.level % 3 == 0) {
 			this.colors.push(this.colorsQueue.shift());
 		} else {
 			this.icons.push(this.iconsQueue.shift());
 		};
 		this.level++;
-		console.log(this.colors,this.icons);
+	};
+	
+	this.addToWorkshop = function(index,resource) {
+		this.workshop[index] = resource;
+		var fill = true;
+		var designString = '';
+		for (var i=0;i<this.workshop.length;i++) {
+			if (this.workshop[i] == undefined) {
+				fill = false;
+			} else {
+				designString += this.workshop[i].currency.name.replace(' ','');
+			};
+		};
+		if (fill) {
+			document.getElementById('designBtn').setAttribute('fill','lightskyblue');
+			game.previewing = designString;
+			if (this.designs[designString] == undefined) {
+				var inputNum = 1 + Math.random() * 3 << 0;
+				var inputPotentials = [];
+				for (var resource of this.workshop) {
+					inputPotentials.push(resource.currency);
+				};
+				var outputNum = Math.min(inputNum,1 + Math.random() * 3 << 0);
+				var inputs = [];
+				var outputs = [];
+				for (var i=0;i<inputNum;i++) {
+					inputs.push(inputPotentials[Math.random() * inputPotentials.length << 0]);
+				};
+				for (var i=0;i<outputNum;i++) {
+					outputs.push(this.currencies[Math.random() * this.currencies.length << 0]);
+				};
+				this.designs[designString] = {
+					inputs: inputs,
+					outputs: outputs,
+					builds: 0,
+				};
+			};
+			view.displayDesign(this.designs[designString].inputs,this.designs[designString].outputs);
+		};
+	};
+	
+	this.buildPart = function() {
+		this.designs[this.previewing].builds++;
+		if (this.designs[this.previewing].builds == 1) {
+			game.levelUp();
+		};
+		var inputs = this.designs[this.previewing].inputs;
+		var outputs = this.designs[this.previewing].outputs;
+		var newPart = new Part(inputs,outputs);
+		this.parts.push(newPart);
+		newPart.place(40,50);
+		newPart.sprite = view.addPart(newPart);
+		for (var resource of this.workshop) {
+			resource.sprite.remove();
+			this.resources.splice(this.resources.indexOf(resource),1);
+		};
+		this.workshop = Array(5);
+		view.clearDesign();
 	};
 };
 
