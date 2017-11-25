@@ -7,10 +7,11 @@ function Game() {
 	this.designs = {};
 	
 	this.level = 1;
+	this.vps = 0;
 	this.colors = ['Red','Blue','Green'];
 	this.colorsQueue = ['Yellow','Orange','Purple','White','Black'];
-	this.icons = ['Coin'];
-	this.iconsQueue = ['Stone','Ingot','Gem','Crown','Sword','Shield','Cup','Diamond'];
+	this.icons = ['Stone'];
+	this.iconsQueue = ['Ingot','Crown','Cup','Shield','Sword','Coin','Gem'];
 	
 	this.workshop = Array(5);
 	
@@ -18,15 +19,19 @@ function Game() {
 		for (var i = 0; i<3; i++) {
 			new Currency(['Red','Blue','Green'][i]);
 		};
+		var speed;
+		var speeds = [Math.random(),Math.random(),Math.random()];
+		var totalSpeed = speeds[0] + speeds[1] + speeds[2];
 		for (var i in game.currencies) {
-			var newPart = new Part([],[this.currencies[i]],undefined,{x:0,y:0});
+			speed = 0.1 * speeds[i] / totalSpeed;
+			var newPart = new Part([],[this.currencies[i]],undefined,speed,0,0);
 			this.parts.push(newPart);
 			newPart.place(-20+20*i,-30);
 			newPart.sprite = view.addPart(newPart);
 		};
 		new Collider(-99,60,-99,-600,'none');
 		new Collider(99,60,99,-600,'none');
-		new Collider(-100,48,100,48,'none');
+		new Collider(-100,47,100,47,'none');
 		new Collider(-100,62,100,62,'none');
 	};
 	
@@ -37,15 +42,29 @@ function Game() {
 		for (var part of this.parts) {
 			part.tick();
 		};
+		document.getElementById('pointsDisplay').innerHTML = this.vps;
 		var timedEvent = setTimeout(this.tick.bind(this),100);
 	};
 	
+	this.flush = function() {
+		for (var resource of this.resources) {
+			resource.sprite.remove();
+		};
+		this.resources = [];
+		this.workshop = Array(5);
+	};
+	
 	this.levelUp = function() {
-		new Currency();
 		if (this.level % 3 == 0) {
-			this.colors.push(this.colorsQueue.shift());
+			newColor = this.colorsQueue.shift();
+			if (newColor !== undefined) {
+				this.colors.push(newColor);
+			};
 		} else {
-			this.icons.push(this.iconsQueue.shift());
+			newIcon = this.iconsQueue.shift();
+			if (newIcon !== undefined) {
+				this.icons.push(newIcon);
+			};
 		};
 		this.level++;
 	};
@@ -54,38 +73,91 @@ function Game() {
 		this.workshop[index] = resource;
 		var fill = true;
 		var designString = '';
+		var components = [];
 		for (var i=0;i<this.workshop.length;i++) {
 			if (this.workshop[i] == undefined) {
 				fill = false;
 			} else {
 				designString += this.workshop[i].currency.name.replace(' ','');
+				components.push(this.workshop[i].currency);
 			};
 		};
 		if (fill) {
 			document.getElementById('designBtn').setAttribute('fill','lightskyblue');
-			game.previewing = designString;
+			this.previewing = designString;
 			if (this.designs[designString] == undefined) {
-				var inputNum = 1 + Math.random() * 3 << 0;
-				var inputPotentials = [];
-				for (var resource of this.workshop) {
-					inputPotentials.push(resource.currency);
-				};
-				var outputNum = Math.min(inputNum,1 + Math.random() * 3 << 0);
-				var inputs = [];
-				var outputs = [];
-				for (var i=0;i<inputNum;i++) {
-					inputs.push(inputPotentials[Math.random() * inputPotentials.length << 0]);
-				};
-				for (var i=0;i<outputNum;i++) {
-					outputs.push(this.currencies[Math.random() * this.currencies.length << 0]);
-				};
-				this.designs[designString] = {
-					inputs: inputs,
-					outputs: outputs,
-					builds: 0,
+				if (this.workshop[0].currency == this.workshop[1].currency && this.workshop[0].currency == this.workshop[2].currency && this.workshop[0].currency == this.workshop[3].currency && this.workshop[0].currency == this.workshop[4].currency) {
+					this.designs[designString] = {
+						tier: tier,
+						type: 'victoryPoint',
+						inputs: [this.workshop[0].currency],
+						outputs: [],
+						components: components,
+						builds: 0,
+						victoryPoints: this.workshop[0].currency.value,
+					};
+				} else {
+					var inputPotentials = [], outputPotentials = [], types = [], upgrades = [], crossgrades = [], downgrades = [];
+					var tier = 0, inputValue = 0, outputValue = 0;
+					for (var resource of this.workshop) {
+						inputPotentials.push(resource.currency);
+						tier += resource.currency.value;
+					};
+					tier *= 0.2;
+					if (tier > 1) {
+						types = ['decompiler','converter','converter','refiner','refiner']
+					} else {
+						types = ['converter','refiner','refiner']
+					};
+					var partIndex = Math.random() * types.length << 0;
+					if (tier > inputValue) {partIndex = Math.min(types.length-1,partIndex + 1)};
+					var partType = types[partIndex];
+					if (partType == 'refiner') {new Currency()};
+					var inputNum = 1 + Math.random() * 3 << 0;
+					var inputs = [];
+					for (var i=0;i<inputNum;i++) {
+						inputs.push(inputPotentials[Math.random() * inputPotentials.length << 0]);
+						inputValue += inputs[i].value;
+					};
+					inputValue /= inputs.length;
+					for (var currency of this.currencies) {
+						if (currency.value > inputValue * 1.1) {
+							upgrades.push(currency);
+						} else if (currency.value < inputValue / 1.1) {
+							downgrades.push(currency);
+						} else {
+							crossgrades.push(currency);
+						};
+					};
+					var outputs = [], outputNum = 1;
+					if (partType == 'refiner') {
+						outputNum = Math.max(1,inputNum - 1);
+						outputPotentials = upgrades.concat(upgrades.concat(upgrades));
+						if (upgrades.length == 0) {outputNum++};
+					} else if (partType == 'converter') {
+						outputNum = inputNum + 1;
+						outputPotentials = crossgrades.concat(crossgrades.concat(crossgrades));
+					} else {
+						outputNum = inputNum + 2;
+						outputPotentials = downgrades.concat(downgrades.concat(downgrades));
+					};
+					outputPotentials = outputPotentials.concat(this.currencies);
+					for (var i=0;i<outputNum;i++) {
+						outputs.push(outputPotentials[Math.random() * outputPotentials.length << 0]);
+						outputValue += outputs[i].value;
+					};
+					this.designs[designString] = {
+						tier: tier,
+						type: partType,
+						inputs: inputs,
+						outputs: outputs,
+						components: components,
+						builds: 0,
+						victoryPoints: 0,
+					};
 				};
 			};
-			view.displayDesign(this.designs[designString].inputs,this.designs[designString].outputs);
+			view.displayDesign(this.designs[designString]);
 		};
 	};
 	
@@ -96,9 +168,11 @@ function Game() {
 		};
 		var inputs = this.designs[this.previewing].inputs;
 		var outputs = this.designs[this.previewing].outputs;
-		var newPart = new Part(inputs,outputs);
+		var newPart = new Part(inputs,outputs,this.designs[this.previewing].victoryPoints);
+		newPart.tier = this.designs[this.previewing].tier;
+		newPart.design = this.previewing;
 		this.parts.push(newPart);
-		newPart.place(40,50);
+		newPart.place(60,50);
 		newPart.sprite = view.addPart(newPart);
 		for (var resource of this.workshop) {
 			resource.sprite.remove();
@@ -140,6 +214,8 @@ function Currency(color) {
 	this.icon = game.icons[Math.random() * game.icons.length << 0];
 	this.name = this.color + ' ' + this.icon;
 	this.key = this.name.replace(' ','');
+	
+	this.value = 1 + game.icons.indexOf(this.icon) + Math.max(0,game.colors.indexOf(this.color)-2);
 	
 	var duplicate = false;
 	for (var currency of game.currencies) {
@@ -227,7 +303,7 @@ function Resource(x,y,currency,momentum) {
 				// Terminal Friction
 				if (Math.abs(this.momentum.x) < 0.1) {this.momentum.x = 0};
 				if (Math.abs(this.momentum.y) < 0.1) {this.momentum.y = 0};
-				if (this.momentum.x == 0 && this.momentum.y == 0 && collisionY) {
+				if (this.momentum.x == 0 && this.momentum.y == 0 && collisionY && colliderY !== undefined) {
 					this.atRest = true;
 					colliderY.supporting.push(this);
 				};
@@ -238,8 +314,8 @@ function Resource(x,y,currency,momentum) {
 	};
 };
 
-function Part(inputs,outputs,step,momentum) {
-	this.name = undefined;
+function Part(inputs,outputs,victoryPoints,step,trajectory,muzzleVelocity) {
+	this.tier = undefined;
 	this.progress = 0;
 	if (step == undefined) {
 		this.step = Math.random() * 0.05;
@@ -261,19 +337,23 @@ function Part(inputs,outputs,step,momentum) {
 		for (var i=0;i<num;i++) {
 			outputs.push(game.currencies[Math.random() * game.currencies.length << 0]);
 		};
+	} else if (outputs == []) {
+		this.victoryPoints = victoryPoints;
 	};
 	this.outputs = outputs;
-	if (momentum == undefined) {
-		this.momentum = {
-			x: 20 * (Math.random() - 0.5),
-			y: 20 * (Math.random() - 0.5),
-		};
+	this.shoot = {};
+	if (trajectory == undefined) {
+		this.shoot.trajectory = Math.random() * 360;
 	} else {
-		this.momentum = momentum;
+		this.shoot.trajectory = trajectory;
+	};
+	if (muzzleVelocity == undefined) {
+		this.shoot.muzzleVelocity = Math.random() * 10;
+	} else {
+		this.shoot.muzzleVelocity = muzzleVelocity;
 	};
 	this.colliders = [];
-	
-	this.name = ['inator','izer',' distributor',' bus'][Math.random() * 4 << 0];
+	this.victoryPoints = victoryPoints;
 	
 	this.setUpColliders = function() {
 		for (var collider of this.colliders) {
@@ -286,6 +366,8 @@ function Part(inputs,outputs,step,momentum) {
 		this.colliders.push(new Collider(this.x-5,this.y,this.x+5,this.y,'none',this));
 		this.colliders.push(new Collider(this.x+5,this.y,this.x+5,this.y+10,'none',this));
 		this.colliders.push(new Collider(this.x-5,this.y,this.x-5,this.y+10,'none',this));
+
+		this.shoot.part = this;
 	};
 	
 	this.place = function(x,y) {
@@ -306,23 +388,31 @@ function Part(inputs,outputs,step,momentum) {
 	};
 	
 	this.produceOutputs = function() {
-		view.shakePart(this);
 		for (var currency of this.outputs) {
-			var newMomentum = {x:this.momentum.x+(Math.random()-0.5)*2,y:this.momentum.y+(Math.random()-0.5)*2};
-			startX = this.x;
-			if (newMomentum.y > -1) {
-				startY = this.y + 10;
-			} else {
-				startY = this.y - 1;
+			var trajectoryRadians = this.shoot.trajectory * Math.PI/180;
+			var momentum = {
+				x:Math.sin(trajectoryRadians) * this.shoot.muzzleVelocity * -1,
+				y:Math.cos(trajectoryRadians) * this.shoot.muzzleVelocity,
 			};
-			game.resources.push(new Resource(startX,startY,currency,newMomentum));
+			momentum.x += (Math.random()-0.5)*2;
+			momentum.y += (Math.random()-0.5)*2;
+			startX = this.x - Math.sin(trajectoryRadians) * 9;
+			startY = this.y + 5 + Math.cos(trajectoryRadians) * 9;
+			game.resources.push(new Resource(startX,startY,currency,momentum));
 		};
+		if (this.victoryPoints !== undefined) {
+			game.vps += this.victoryPoints;
+		};
+		
+		// Shake Shake
+		view.shakePart(this);
 		for (var collider of this.colliders) {
 			for (var resource of collider.supporting) {
 				resource.atRest = false;
 				resource.momentum.y -= Math.random() * 5;
 				resource.momentum.x = Math.random() - 0.5;
 			};
+			collider.supporting = [];
 		};
 	};
 	
@@ -346,6 +436,12 @@ function Part(inputs,outputs,step,momentum) {
 				view.partProgress(this);
 			};
 		};
+	};
+	
+	this.shoot.moveShoot = function(e) {
+		this.trajectory = Math.atan2(-1 * (this.x - this.part.x),this.y - this.part.y) * 180/Math.PI;
+		var distance = Math.pow(Math.pow(this.x - this.part.x,2) + Math.pow(this.y - this.part.y,2),0.5);
+		this.muzzleVelocity = Math.min(10,Math.max(0,distance-15));
 	};
 	
 	// End Part

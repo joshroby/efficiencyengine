@@ -28,6 +28,8 @@ var handlers = {
 			for (var i in game.workshop) {
 				if (focus == game.workshop[i]) {
 					game.workshop[i] = undefined;
+					view.clearDesign();
+					this.previewing = undefined;
 				};
 			};
 			focus.atRest = false;
@@ -45,6 +47,9 @@ var handlers = {
 				item.setUpColliders();
 			} else if (item instanceof Resource) {
 				view.moveResource(item);
+			} else if (item.trajectory !== undefined) {
+				item.moveShoot();
+				view.moveShoot(item);
 			};
 		};
 	},
@@ -53,8 +58,8 @@ var handlers = {
 		if (game.dragging !== undefined) {
 			if (game.dragging.currency !== undefined) {
 				var mouse = {
-					x: game.dragging.sprite.cx.animVal.value,
-					y: game.dragging.sprite.cy.animVal.value,
+					x: game.dragging.sprite.x.animVal.value,
+					y: game.dragging.sprite.y.animVal.value,
 				};
 				var selectedSlot = undefined;
 				for (var i=0;i<5;i++) {
@@ -69,8 +74,8 @@ var handlers = {
 				if (selectedSlot !== undefined && game.workshop[selectedSlot] == undefined) {
 					game.dragging.atRest = true;
 					slot = document.getElementById('workshopSlot_'+selectedSlot);
-					game.dragging.sprite.setAttribute('cx',slot.cx.animVal.value);
-					game.dragging.sprite.setAttribute('cy',slot.cy.animVal.value);
+					game.dragging.sprite.setAttribute('x',slot.cx.animVal.value);
+					game.dragging.sprite.setAttribute('y',slot.cy.animVal.value);
 					game.addToWorkshop(selectedSlot,game.dragging);
 				} else {
 					game.dragging.atRest = false;
@@ -78,6 +83,9 @@ var handlers = {
 			};
 			game.dragging = undefined;
 		};
+		var uiGroup = document.getElementById('uiGroup');
+		uiGroup.innerHTML = '';
+
 	},
 	
 	buildPart: function() {
@@ -85,11 +93,32 @@ var handlers = {
 			game.buildPart();
 		};
 	},
+	
+	displayComponents: function(part) {
+		if (part.design !== undefined) {
+			var workshopClear = true;
+			for (var i in game.workshop) {
+				if (game.workshop[i] !== undefined) {
+					workshopClear = false;
+				};
+			};
+			if (workshopClear) {
+				view.displayDesign(game.designs[part.design]);
+			};
+		};
+	},
+	
+	clearComponents: function() {
+		view.clearDesign();
+	},
+	
+	checkForDead: function(resource) {
+		if (game.resources.indexOf(this) == -1) {this.sprite.remove()};
+	},
+	
+	flush: function() {
+		game.flush();
+		document.getElementById('resourcesGroup').innerHTML = '';
+	},
 
 }
-
-// Move blue box to under floor
-// give it five input slots
-// combinations of resources produce different parts
-// can make duplicates with same sequences
-// creating new parts introduces new currencies into the game

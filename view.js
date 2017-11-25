@@ -22,6 +22,7 @@ var view = {
 		genericPart.setAttribute('fill','grey');
 		genericPart.setAttribute('stroke','black');
 		defs.appendChild(genericPart);
+		
 		var genericPartWheel = document.createElementNS('http://www.w3.org/2000/svg','g');
 		genericPartWheel.id = 'genericPartWheel';
 		defs.appendChild(genericPartWheel);
@@ -39,14 +40,135 @@ var view = {
 		lilCircle.setAttribute('fill','grey');
 		lilCircle.setAttribute('stroke','black');
 		genericPartWheel.appendChild(lilCircle);
+		
+		var genericPartShoot = document.createElementNS('http://www.w3.org/2000/svg','g');
+		genericPartShoot.id = 'genericPartShoot';
+		defs.appendChild(genericPartShoot);
+		var polyline = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+		polyline.setAttribute('fill','gray');
+		polyline.setAttribute('stroke','black');
+		polyline.setAttribute('points','3,0 2,9 -2,9 -3,0');
+		genericPartShoot.appendChild(polyline);
 
-		var genericResource = document.createElementNS('http://www.w3.org/2000/svg','circle');
-		genericResource.id = 'genericResource';
-		genericResource.setAttribute('cx',0);
-		genericResource.setAttribute('cy',0);
-		genericResource.setAttribute('r',2);
-		genericResource.setAttribute('stroke','black');
-		defs.appendChild(genericResource);
+		var resourceStone = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		resourceStone.id = 'resourceStone';
+		resourceStone.setAttribute('cx',0);
+		resourceStone.setAttribute('cy',0);
+		resourceStone.setAttribute('r',2);
+		resourceStone.setAttribute('stroke','black');
+		defs.appendChild(resourceStone);
+		
+		var resourceIngot = document.createElementNS('http://www.w3.org/2000/svg','g');
+		resourceIngot.id = 'resourceIngot';
+		defs.appendChild(resourceIngot);
+		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+		polygon.setAttribute('points','1,2 3,0 2.5,-2 0.5,-2 -2.5,0');
+		polygon.setAttribute('stroke','black');
+		polygon.setAttribute('stroke-linejoin','round');
+		resourceIngot.appendChild(polygon);
+		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+		polygon.setAttribute('points','-3,2 -2.5,0 0.5,0 1,2 -3,2');
+		polygon.setAttribute('stroke','black');
+		polygon.setAttribute('stroke-linejoin','round');
+		resourceIngot.appendChild(polygon);
+		
+		var resourceCoin = document.createElementNS('http://www.w3.org/2000/svg','g');
+		resourceCoin.id = 'resourceCoin';
+		resourceCoin.setAttribute('stroke','black');
+		defs.appendChild(resourceCoin);
+		var ellipseHeads = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+		resourceCoin.appendChild(ellipseHeads);
+		ellipseHeads.setAttribute('cx',0.25);
+		ellipseHeads.setAttribute('cy',0);
+		ellipseHeads.setAttribute('rx',1.5);
+		ellipseHeads.setAttribute('ry',2);
+		var ellipseTails = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+		resourceCoin.appendChild(ellipseTails);
+		ellipseTails.setAttribute('cx',-0.25);
+		ellipseTails.setAttribute('cy',0);
+		ellipseTails.setAttribute('rx',1.5);
+		ellipseTails.setAttribute('ry',2);
+		
+		var resourceCrown = document.createElementNS('http://www.w3.org/2000/svg','g');
+		defs.appendChild(resourceCrown);
+		resourceCrown.id = 'resourceCrown';
+		resourceCrown.setAttribute('stroke','black');
+		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+		polygon.setAttribute('points','-2,2 2,2 3,-1 1,0 0,-2 -1,0 -3,-1 -2,2');
+		polygon.setAttribute('stroke','black');
+		polygon.setAttribute('stroke-linejoin','round');
+		resourceCrown.appendChild(polygon);
+		
+		var resourceShield = document.createElementNS('http://www.w3.org/2000/svg','g');
+		defs.appendChild(resourceShield);
+		resourceShield.id = 'resourceShield';
+		resourceShield.setAttribute('stroke','black');
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		var d = 'M 2,0 L 0,-2 L -2,0 L 0,2';
+		d += 'C 0.5,2.5 1.5,2.5 2,2';
+		d += 'C 2.5,1.5 2.5,0.5 2,0';
+		d += ' z'
+		path.setAttribute('d',d);
+		path.setAttribute('stroke','black');
+		path.setAttribute('stroke-linejoin','round');
+		resourceShield.appendChild(path);
+		
+		var resourceSword = document.createElementNS('http://www.w3.org/2000/svg','g');
+		defs.appendChild(resourceSword);
+		resourceSword.id = 'resourceSword';
+		resourceSword.setAttribute('stroke','black');
+		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+		polygon.setAttribute('points',' -2.5,-2 -2,-2.5 2.5,1.5 2.5,2.5 1.5,2.5 -2.5,-2');
+		polygon.setAttribute('stroke','black');
+		polygon.setAttribute('stroke-linejoin','round');
+		resourceSword.appendChild(polygon);
+		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+		polygon.setAttribute('points','0,-2 1,-1 -1,1 -2,0 0,-2');
+		polygon.setAttribute('stroke','black');
+		polygon.setAttribute('stroke-linejoin','round');
+		resourceSword.appendChild(polygon);
+		
+		var resourceCup = document.createElementNS('http://www.w3.org/2000/svg','g');
+		defs.appendChild(resourceCup);
+		resourceCup.id = 'resourceCup';
+		resourceCup.setAttribute('stroke','black');
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		var d = 'M -2,-2';
+		d += 'C -2,0 -0.75,-0.5 -0.75,0';
+		d += 'C -0.75,1.5 -1.5,2 -1.5,2';
+		d += 'L 1.5,2';
+		d += 'C 1.5,2 0.75,1.5 0.75,0';
+		d += 'C 0.75,-0.5 2,0 2,-2';
+		d += ' z'
+		path.setAttribute('d',d);
+		path.setAttribute('stroke','black');
+		path.setAttribute('stroke-linejoin','round');
+		resourceCup.appendChild(path);
+
+		var resourceGem = document.createElementNS('http://www.w3.org/2000/svg','g');
+		defs.appendChild(resourceGem);
+		resourceGem.id = 'resourceGem';
+		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+		polygon.setAttribute('points','-1,-2 1,-2 2,-1 2,1 1,2 -1,2 -2,1 -2,-1');
+		polygon.setAttribute('stroke','black');
+		resourceGem.appendChild(polygon);
+		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		rect.setAttribute('x',-1);
+		rect.setAttribute('y',-1);
+		rect.setAttribute('width',2);
+		rect.setAttribute('height',2);
+		rect.setAttribute('stroke-width',0.25);
+		rect.setAttribute('stroke','black');
+		resourceGem.appendChild(rect);
+		
+		var victoryPoint = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+		defs.appendChild(victoryPoint);
+		victoryPoint.id = 'resourceVictoryPoint';
+		victoryPoint.setAttribute('fill','cyan');
+		victoryPoint.setAttribute('stroke','black');
+		victoryPoint.setAttribute('stroke-width',0.5);
+		victoryPoint.setAttribute('points','0,-2 1,-1 3,-1 2,0 3,1 1,1 0,2 -1,1 -3,1 -2,0 -3,-1 -1,-1');
+		victoryPoint.setAttribute('transform','scale(0.9,1.2)');
 
 		// Layers
 		var colliderGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
@@ -69,7 +191,12 @@ var view = {
 		partsGroup.id = 'partsGroup';
 		svg.appendChild(partsGroup);
 		
+		var uiGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+		uiGroup.id = 'uiGroup';
+		svg.appendChild(uiGroup);
+		
 		// Shop
+		
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		rect.setAttribute('x',-90);
 		rect.setAttribute('y',51);
@@ -77,17 +204,45 @@ var view = {
 		rect.setAttribute('height',10);
 		rect.setAttribute('fill','darkslategray');
 		shopGroup.appendChild(rect);
+
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		rect.setAttribute('x',-90);
 		rect.setAttribute('y',50);
-		rect.setAttribute('width',53);
-		rect.setAttribute('height',12);
+		rect.setAttribute('width',12);
+		rect.setAttribute('height',11);
 		rect.setAttribute('fill','silver');
+		rect.setAttribute('stroke','black');
+		rect.setAttribute('stroke-width',0.5);
+		shopGroup.appendChild(rect);
+		var icon = document.createElementNS('http://www.w3.org/2000/svg','use');
+		icon.setAttribute('href','#resourceVictoryPoint');
+		icon.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resourceVictoryPoint');
+		icon.setAttribute('x',-84);
+		icon.setAttribute('y',55.5);
+		icon.setAttribute('transform','translate(84,-55.5) scale(2)');
+		shopGroup.appendChild(icon);
+		var pointsDisplay = document.createElementNS('http://www.w3.org/2000/svg','text');
+		pointsDisplay.id = 'pointsDisplay';
+		pointsDisplay.setAttribute('x',-84);
+		pointsDisplay.setAttribute('y',56.5);
+		pointsDisplay.setAttribute('text-anchor','middle');
+		pointsDisplay.setAttribute('font-size',3);
+		pointsDisplay.innerHTML = '1000';
+		shopGroup.appendChild(pointsDisplay);
+		
+		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		rect.setAttribute('x',-75);
+		rect.setAttribute('y',50);
+		rect.setAttribute('width',53);
+		rect.setAttribute('height',11);
+		rect.setAttribute('fill','silver');
+		rect.setAttribute('stroke','black');
+		rect.setAttribute('stroke-width',0.5);
 		shopGroup.appendChild(rect);
 		for (var i=0;i<5;i++) {
 			var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
 			circle.id = 'workshopSlot_'+i;
-			circle.setAttribute('cx',-80 + i*8);
+			circle.setAttribute('cx',-65 + i*8);
 			circle.setAttribute('cy',56);
 			circle.setAttribute('r',2.5);
 			circle.setAttribute('fill','dimgray');
@@ -96,27 +251,29 @@ var view = {
 		};
 		
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
-		rect.setAttribute('x',-35);
+		rect.setAttribute('x',-20);
 		rect.setAttribute('y',50);
-		rect.setAttribute('width',70);
-		rect.setAttribute('height',12);
+		rect.setAttribute('width',71);
+		rect.setAttribute('height',11);
 		rect.setAttribute('fill','silver');
+		rect.setAttribute('stroke','black');
+		rect.setAttribute('stroke-width',0.5);
 		shopGroup.appendChild(rect);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		rect.id = 'designScreen';
-		rect.setAttribute('x',-33);
+		rect.setAttribute('x',-17);
 		rect.setAttribute('y',52);
 		rect.setAttribute('rx',2);
 		rect.setAttribute('ry',2);
 		rect.setAttribute('width',50);
-		rect.setAttribute('height',8);
+		rect.setAttribute('height',7);
 		rect.setAttribute('fill','darkgray');
 		rect.setAttribute('stroke','darkgray');
 		shopGroup.appendChild(rect);		
 		svgDiv.appendChild(svg);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		rect.id = 'designBtn';
-		rect.setAttribute('x',20);
+		rect.setAttribute('x',36);
 		rect.setAttribute('y',53.5);
 		rect.setAttribute('rx',1);
 		rect.setAttribute('ry',1);
@@ -126,6 +283,35 @@ var view = {
 		rect.setAttribute('stroke','darkgray');
 		rect.addEventListener('click',handlers.buildPart);
 		shopGroup.appendChild(rect);
+
+		var flush = document.createElementNS('http://www.w3.org/2000/svg','g');
+		shopGroup.appendChild(flush);
+		flush.addEventListener('click',handlers.flush);
+		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		flush.appendChild(rect);
+		rect.setAttribute('x',78);
+		rect.setAttribute('y',50);
+		rect.setAttribute('width',12);
+		rect.setAttribute('height',11);
+		rect.setAttribute('fill','silver');
+		rect.setAttribute('stroke','black');
+		rect.setAttribute('stroke-width',0.5);
+		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		flush.appendChild(circle);
+		circle.setAttribute('cx',84);
+		circle.setAttribute('cy',55.5);
+		circle.setAttribute('r',3);
+		circle.setAttribute('stroke','red');
+		circle.setAttribute('fill','none');
+		var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+		flush.appendChild(line);
+		line.setAttribute('x1',84);
+		line.setAttribute('y1',52.5);
+		line.setAttribute('x2',84);
+		line.setAttribute('y2',58.5);
+		line.setAttribute('stroke','red');
+		line.setAttribute('transform','rotate(45 84 55.5)');
+
 		
 		return [svgDiv];
 	},
@@ -147,8 +333,26 @@ var view = {
 		var partGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
 		document.getElementById('partsGroup').appendChild(partGroup);
 		
+		partGroup.addEventListener('mouseenter',handlers.displayComponents.bind(undefined,part));
+		partGroup.addEventListener('mouseleave',handlers.clearComponents);
+		
+		if (part.outputs.length > 0) {
+			var shoot = document.createElementNS('http://www.w3.org/2000/svg','use');
+			shoot.setAttribute('href','#genericPartShoot');
+			shoot.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#genericPartShoot');
+			shoot.setAttribute('x',part.x);
+			shoot.setAttribute('y',part.y+5);
+			partGroup.appendChild(shoot);
+			shoot.setAttribute('transform','rotate('+part.shoot.trajectory+' '+part.x+' '+(part.y+5)+')');
+			shoot.addEventListener('mousedown',handlers.dragStart.bind(part,part.shoot));
+		} else {
+			var noShoot = document.createElementNS('http://www.w3.org/2000/svg','group');
+			partGroup.appendChild(noShoot);
+		};
+		
 		var partSprite = document.createElementNS('http://www.w3.org/2000/svg','use');
 		partSprite.setAttribute('href','#genericPart');
+		partSprite.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#genericPart');
 		partSprite.setAttribute('x',part.x-5);
 		partSprite.setAttribute('y',part.y);
 		partGroup.appendChild(partSprite);
@@ -157,6 +361,7 @@ var view = {
 		if (part.inputs.length == 0) {
 			var partWheel = document.createElementNS('http://www.w3.org/2000/svg','use');
 			partWheel.setAttribute('href','#genericPartWheel');
+			partWheel.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#genericPartWheel');
 			partWheel.setAttribute('x',part.x-5);
 			partWheel.setAttribute('y',part.y);
 			partWheel.addEventListener('click',handlers.advanceWheel.bind(part,part));
@@ -169,7 +374,8 @@ var view = {
 				var lightCoordinates = view.lightCoordinates(part,i,'inputs');
 				var cx = lightCoordinates.x;
 				var cy = lightCoordinates.y;
-				inputLight.setAttribute('href','#genericResource');
+				inputLight.setAttribute('href','#resource'+part.inputs[i].icon);
+				inputLight.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+part.inputs[i].icon);
 				inputLight.setAttribute('x',cx );
 				inputLight.setAttribute('y',cy);
 				inputLight.setAttribute('fill',part.inputs[i].color);
@@ -184,7 +390,8 @@ var view = {
 				var lightCoordinates = view.lightCoordinates(part,part.inputs.length+parseInt(i),'outputs');
 				var cx = lightCoordinates.x;
 				var cy = lightCoordinates.y;
-				outputLight.setAttribute('href','#genericResource');
+				outputLight.setAttribute('href','#resource'+part.outputs[i].icon);
+				outputLight.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+part.outputs[i].icon);
 				outputLight.setAttribute('x',cx );
 				outputLight.setAttribute('y',cy);
 				outputLight.setAttribute('fill',part.outputs[i].color);
@@ -213,7 +420,7 @@ var view = {
 	},
 	
 	turnPartWheel: function(part) {
-		var wheel = part.sprite.children[1];
+		var wheel = part.sprite.children[2];
 		wheel.setAttribute('transform','rotate('+part.progress*360+' '+part.x+' '+(part.y+5)+')');
 	},
 	
@@ -233,40 +440,44 @@ var view = {
 		for (var i in part.inputs) {
 			if (part.inputs[i] == part.hopper[i]) {
 // 				console.log(part.sprite.children[1].children);
-				part.sprite.children[1].children[i].setAttribute('opacity',1);
+				part.sprite.children[2].children[i].setAttribute('opacity',1);
 			} else {
-				part.sprite.children[1].children[i].setAttribute('opacity',0.2);
+				part.sprite.children[2].children[i].setAttribute('opacity',0.2);
 			};
 		};
 	},
 	
 	addResource: function(resource) {
-		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-		circle.setAttribute('cx',resource.x);
-		circle.setAttribute('cy',resource.y);
-		circle.setAttribute('r',2);
-		circle.setAttribute('fill',resource.currency.color);
-		circle.setAttribute('stroke','black');
-		document.getElementById('resourcesGroup').appendChild(circle);
+		var icon = document.createElementNS('http://www.w3.org/2000/svg','use');
+		icon.setAttribute('href','#resource'+resource.currency.icon);
+		icon.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resource'+resource.currency.icon);
+		icon.setAttribute('x',resource.x);
+		icon.setAttribute('y',resource.y);
+		icon.setAttribute('fill',resource.currency.color);
+		document.getElementById('resourcesGroup').appendChild(icon);
 		
-		circle.addEventListener('mousedown',handlers.dragStart.bind(resource,resource));
-		
-		return circle;
+		icon.addEventListener('mousedown',handlers.dragStart.bind(resource,resource));
+		icon.addEventListener('mouseover',handlers.checkForDead.bind(resource));
+		return icon;
+				
 	},
 	
 	moveResource: function(resource) {
-		resource.sprite.setAttribute('cx',resource.x);
-		resource.sprite.setAttribute('cy',resource.y);
+		resource.sprite.setAttribute('x',resource.x);
+		resource.sprite.setAttribute('y',resource.y);
 	},
 	
 	movePart: function(part) {
-		part.sprite.children[0].setAttribute('x',part.x - 5);
-		part.sprite.children[0].setAttribute('y',part.y);
+		part.sprite.children[0].setAttribute('x',part.x);
+		part.sprite.children[0].setAttribute('y',part.y+5);
+		part.sprite.children[0].setAttribute('transform','rotate('+part.shoot.trajectory+' '+part.x+' '+(part.y+5)+')');
+		part.sprite.children[1].setAttribute('x',part.x - 5);
+		part.sprite.children[1].setAttribute('y',part.y);
 		if (part.inputs.length == 0) {
-			part.sprite.children[1].setAttribute('x',part.x - 5);
-			part.sprite.children[1].setAttribute('y',part.y);
+			part.sprite.children[2].setAttribute('x',part.x - 5);
+			part.sprite.children[2].setAttribute('y',part.y);
 		} else {
-			var lights = part.sprite.children[1].children;
+			var lights = part.sprite.children[2].children;
 			for (var i=0;i<lights.length;i++) {
 				var inputOutput = 'inputs';
 				if (i >= part.inputs.length) {inputOutput = 'outputs'};
@@ -282,17 +493,69 @@ var view = {
 		};
 	},
 	
-	displayDesign: function(inputs,outputs) {
+	moveShoot: function(shoot) {
+		shoot.part.sprite.children[0].setAttribute('transform','rotate('+shoot.trajectory+' '+shoot.part.x+' '+(shoot.part.y+5)+')');
+		var uiGroup = document.getElementById('uiGroup');
+		uiGroup.innerHTML = '';
+		var coords = {
+			x: shoot.part.x - Math.sin(shoot.trajectory * Math.PI/180) * (12 + 2 * shoot.muzzleVelocity),
+			y: shoot.part.y + 5 + Math.cos(shoot.trajectory * Math.PI/180) * (12 + 2 * shoot.muzzleVelocity),
+		};
+		var target = document.createElementNS('http://www.w3.org/2000/svg','g');
+		uiGroup.appendChild(target);
+		target.setAttribute('fill','none');
+		target.setAttribute('stroke','red');
+		target.setAttribute('stroke-width',0.25);
+		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		target.appendChild(circle);
+		circle.setAttribute('cx',coords.x);
+		circle.setAttribute('cy',coords.y);
+		circle.setAttribute('r',2);
+		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		target.appendChild(circle);
+		circle.setAttribute('cx',coords.x);
+		circle.setAttribute('cy',coords.y);
+		circle.setAttribute('r',1.5);
+		var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+		target.appendChild(line);
+		line.setAttribute('x1',coords.x+1.5);
+		line.setAttribute('y1',coords.y);
+		line.setAttribute('x2',coords.x+2.5);
+		line.setAttribute('y2',coords.y);
+		var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+		target.appendChild(line);
+		line.setAttribute('x1',coords.x-1.5);
+		line.setAttribute('y1',coords.y);
+		line.setAttribute('x2',coords.x-2.5);
+		line.setAttribute('y2',coords.y);
+		var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+		target.appendChild(line);
+		line.setAttribute('x1',coords.x);
+		line.setAttribute('y1',coords.y+1.5);
+		line.setAttribute('x2',coords.x);
+		line.setAttribute('y2',coords.y+2.5);
+		var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+		target.appendChild(line);
+		line.setAttribute('x1',coords.x);
+		line.setAttribute('y1',coords.y-1.5);
+		line.setAttribute('x2',coords.x);
+		line.setAttribute('y2',coords.y-2.5);
+	},
+	
+	displayDesign: function(design) {
+		var inputs = design.inputs;
+		var outputs = design.outputs;
 		var designGroup = document.getElementById('designGroup');
 		designGroup.innerHTML = '';
 		var screen = document.getElementById('designScreen');
 		screen.setAttribute('fill','ghostwhite');
 		var x = screen.x.animVal.value + 5;
 		var y = screen.y.animVal.value + screen.height.animVal.value/2;
-		x += (45 - (inputs.length + outputs.length + 1)*5)/2
+		x += (45 - (inputs.length + outputs.length + 1)*5)/2;
 		for (var input of inputs) {
 			var icon = document.createElementNS('http://www.w3.org/2000/svg','use');
-			icon.setAttribute('href','#genericResource');
+			icon.setAttribute('href','#resource'+input.icon);
+			icon.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resource'+input.icon);
 			icon.setAttribute('x',x);
 			icon.setAttribute('y',y);
 			icon.setAttribute('fill',input.color);
@@ -305,14 +568,53 @@ var view = {
 		arrow.setAttribute('fill','black');
 		designGroup.appendChild(arrow);
 		x += 5;
-		for (var output of outputs) {
-			var icon = document.createElementNS('http://www.w3.org/2000/svg','use');
-			icon.setAttribute('href','#genericResource');
-			icon.setAttribute('x',x);
-			icon.setAttribute('y',y);
-			icon.setAttribute('fill',output.color);
-			designGroup.appendChild(icon);
-			x += 5;
+		if (outputs.length == 0) {
+			var vps = document.createElementNS('http://www.w3.org/2000/svg','use');
+			designGroup.appendChild(vps);
+			vps.setAttribute('href','#resourceVictoryPoint');
+			vps.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resourceVictoryPoint');
+			vps.setAttribute('x',x);
+			vps.setAttribute('y',y);
+			var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+			designGroup.appendChild(text);
+			text.setAttribute('x',x);
+			text.setAttribute('y',y+1);
+			text.setAttribute('text-anchor','middle');
+			text.setAttribute('font-size',3);
+			text.setAttribute('fill','black');
+			text.setAttribute('stroke','cyan');
+			text.setAttribute('paint-order','stroke');
+			text.innerHTML = design.victoryPoints;
+		} else {
+			for (var output of outputs) {
+				var icon = document.createElementNS('http://www.w3.org/2000/svg','use');
+				icon.setAttribute('href','#resource'+output.icon);
+				icon.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resource'+output.icon);
+				icon.setAttribute('x',x);
+				icon.setAttribute('y',y);
+				icon.setAttribute('fill',output.color);
+				designGroup.appendChild(icon);
+				x += 5;
+			};
+		};
+		var workshopClear = true;
+		for (var i in game.workshop) {
+			if (game.workshop[i] !== undefined) {
+				workshopClear = false;
+			};
+		};
+		if (workshopClear) {
+			for (var i=0;i<5;i++) {
+				var slot = document.getElementById('workshopSlot_'+i);
+				var icon = document.createElementNS('http://www.w3.org/2000/svg','use');
+				icon.setAttribute('href','#resource'+design.components[i].icon);
+				icon.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resource'+design.components[i].icon);
+				icon.setAttribute('x',slot.cx.animVal.value);
+				icon.setAttribute('y',slot.cy.animVal.value);
+				icon.setAttribute('opacity',0.5);
+				icon.setAttribute('fill',design.components[i].color);
+				document.getElementById('designGroup').appendChild(icon);
+			};
 		};
 	},
 	
