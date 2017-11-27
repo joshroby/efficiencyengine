@@ -1,11 +1,19 @@
 var handlers = {
 
-	load: function() {
+	newGame: function() {
 		// Load Body Contents
 		var pageContents = view.pageContents();
-		document.body.innerHTML = '';
+// 		document.body.innerHTML = '';
+		document.getElementById('gameDiv').innerHTML = '';
 		for (var element of pageContents) {
-			document.body.appendChild(element);
+			document.getElementById('gameDiv').appendChild(element);
+		};
+		
+		// Clear Old Game's Ticks
+		if (game !== undefined) {
+			for (var i in game.ticks) {
+				clearTimeout(game.ticks[i]);
+			};
 		};
 		
 		// New Game
@@ -85,7 +93,6 @@ var handlers = {
 		};
 		var uiGroup = document.getElementById('uiGroup');
 		uiGroup.innerHTML = '';
-
 	},
 	
 	buildPart: function() {

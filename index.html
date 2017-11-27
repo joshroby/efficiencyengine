@@ -1,23 +1,49 @@
-<!DOCTYPE html>
 <html>
+
 	<head>
 		<title>Efficiency Engine</title>
 		<link rel="stylesheet" href="style.css">
-		<script type="text/javascript" src="handlers.js"></script>
-		<script type="text/javascript" src="model.js"></script>
-		<script type="text/javascript" src="view.js"></script>
-<!-- 
+		<script src="gamen.js"></script>
+		<link rel="stylesheet" href="gamen.css">
+		<script src="handlers.js"></script>
+		<script src="model.js"></script>
+		<script src="view.js"></script>
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:creator" content="@joshroby" />
-		<meta property="og:image" content="http://joshroby.com/procjam/openGraphImage.png">
- -->
+		<meta property="og:image" content="http://joshroby.com/phoenixroad/openGraphImage.png">
 	</head>
 
-	<body onload='handlers.load()'></body>
+	<body onload='gamen.init()'>
+		
+		<div id='mainMenuDiv'>
+		
+			<h4 id='titleHead'></h4>
+		
+			<button onclick = 'handlers.newGame()'>New Game</button>
+			<button id = 'saveButton' hidden disabled onclick = 'gamen.saveGame()'>Save Game</button>
+			<button onclick='handlers.toggleOptions()' hidden>Options</button>
+			<button id='gamenSupportBtn' onclick='gamen.support()'>Support</button>
+			
+			<div id='optionsDiv'></div>
+			
+		
+		</div>
+		
+		<div id='gameDiv'>		
+			
+		</div>
+		
+		<div id='gamenModalBacksplash'>
+		
+			<div id='gamenModalDiv'>
+			
+				<div id='gamenModalBustDiv'></div>
+				<div id='gamenModalTextDiv'></div>
+			
+			</div>
+		
+		</div>
+	
+	</body>
+
 </html>
-
-
-<!-- 
-HEY WHEN YOU MAKE A NEW PART OUT OF FIVE OF THE SAME THING,
-IT TURNS THAT THING INTO VICTORY POINTS BASED ON HOW VALUABLE THE CURRENCY IS
- -->

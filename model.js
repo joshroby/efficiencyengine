@@ -1,3 +1,12 @@
+var model = {
+	gameTitle: "Efficiency Engine",
+	gameColors: [
+		'grey',
+	],
+	supportLink: 'http://patreon.com/joshroby',
+	supportLinkLabel: 'Patreon',
+};
+
 var game;
 function Game() {
 	this.colliders = [];
@@ -5,11 +14,14 @@ function Game() {
 	this.resources = [];
 	this.parts = [];
 	this.designs = {};
+	this.scoreLog = [];
+	this.ticks = [];
 	
 	this.level = 1;
 	this.vps = 0;
+	
 	this.colors = ['Red','Blue','Green'];
-	this.colorsQueue = ['Yellow','Orange','Purple','White','Black'];
+	this.colorsQueue = ['Yellow','Orange','Purple','Fuchsia','White'];
 	this.icons = ['Stone'];
 	this.iconsQueue = ['Ingot','Crown','Cup','Shield','Sword','Coin','Gem'];
 	
@@ -29,6 +41,7 @@ function Game() {
 			newPart.place(-20+20*i,-30);
 			newPart.sprite = view.addPart(newPart);
 		};
+		new Currency();
 		new Collider(-99,60,-99,-600,'none');
 		new Collider(99,60,99,-600,'none');
 		new Collider(-100,47,100,47,'none');
@@ -36,14 +49,24 @@ function Game() {
 	};
 	
 	this.tick = function() {
+		var timedEvent = setTimeout(this.tick.bind(this),100);
+		this.ticks.push(timedEvent);
 		for (var resource of this.resources) {
 			resource.tick();
 		};
 		for (var part of this.parts) {
 			part.tick();
 		};
-		document.getElementById('pointsDisplay').innerHTML = this.vps;
-		var timedEvent = setTimeout(this.tick.bind(this),100);
+		this.updateScore();
+	};
+	
+	this.updateScore = function() {
+		this.scoreLog.push(this.vps);
+		var lifetimeEfficiency = 10 * this.vps / this.scoreLog.length;
+		var currentInterval = 100;
+		var currentEfficiency = (this.vps - this.scoreLog[this.scoreLog.length - currentInterval]) / (currentInterval/10);
+		if (isNaN(currentEfficiency)) {currentEfficiency = 0;};
+		view.displayScores(this.vps,lifetimeEfficiency,currentEfficiency);
 	};
 	
 	this.flush = function() {
@@ -52,6 +75,7 @@ function Game() {
 		};
 		this.resources = [];
 		this.workshop = Array(5);
+		this.overload = false;
 	};
 	
 	this.levelUp = function() {
@@ -215,7 +239,7 @@ function Currency(color) {
 	this.name = this.color + ' ' + this.icon;
 	this.key = this.name.replace(' ','');
 	
-	this.value = 1 + game.icons.indexOf(this.icon) + Math.max(0,game.colors.indexOf(this.color)-2);
+	this.value = (1 + game.icons.indexOf(this.icon)) * Math.max(1,game.colors.indexOf(this.color)-2);
 	
 	var duplicate = false;
 	for (var currency of game.currencies) {
@@ -268,7 +292,10 @@ function Resource(x,y,currency,momentum) {
 							bounce = true;
 						} else {
 							collider.part.addToHopper(this.currency,emptySlots[0]);
-							game.resources.splice(game.resources.indexOf(this),1);
+							var resourceIndex = game.resources.indexOf(this);
+							if (resourceIndex !== undefined) {
+								game.resources.splice(resourceIndex,1);
+							};
 							this.sprite.remove();
 							consumed = true;
 						};
@@ -388,20 +415,25 @@ function Part(inputs,outputs,victoryPoints,step,trajectory,muzzleVelocity) {
 	};
 	
 	this.produceOutputs = function() {
-		for (var currency of this.outputs) {
-			var trajectoryRadians = this.shoot.trajectory * Math.PI/180;
-			var momentum = {
-				x:Math.sin(trajectoryRadians) * this.shoot.muzzleVelocity * -1,
-				y:Math.cos(trajectoryRadians) * this.shoot.muzzleVelocity,
+		if (game.resources.length < 1000) {
+			for (var currency of this.outputs) {
+				var trajectoryRadians = this.shoot.trajectory * Math.PI/180;
+				var momentum = {
+					x:Math.sin(trajectoryRadians) * this.shoot.muzzleVelocity * -1,
+					y:Math.cos(trajectoryRadians) * this.shoot.muzzleVelocity,
+				};
+				momentum.x += (Math.random()-0.5)*2;
+				momentum.y += (Math.random()-0.5)*2;
+				startX = this.x - Math.sin(trajectoryRadians) * 9;
+				startY = this.y + 5 + Math.cos(trajectoryRadians) * 9;
+				game.resources.push(new Resource(startX,startY,currency,momentum));
 			};
-			momentum.x += (Math.random()-0.5)*2;
-			momentum.y += (Math.random()-0.5)*2;
-			startX = this.x - Math.sin(trajectoryRadians) * 9;
-			startY = this.y + 5 + Math.cos(trajectoryRadians) * 9;
-			game.resources.push(new Resource(startX,startY,currency,momentum));
-		};
-		if (this.victoryPoints !== undefined) {
-			game.vps += this.victoryPoints;
+			if (this.victoryPoints !== undefined) {
+				game.vps += this.victoryPoints;
+			};
+		} else {
+			var flushPanel = document.getElementById('flushPanel');
+			view.shakePart({sprite:flushPanel,x:84,y:55.5});
 		};
 		
 		// Shake Shake

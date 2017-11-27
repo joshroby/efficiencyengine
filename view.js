@@ -1,6 +1,11 @@
 var view = {
 
+	options: {
+		scoreDisplay: 'VPS',
+	},
+
 	pageContents: function() {
+		
 		var svgDiv = document.createElement('div');
 		svgDiv.id = 'svgDiv';
 	
@@ -205,7 +210,13 @@ var view = {
 		rect.setAttribute('fill','darkslategray');
 		shopGroup.appendChild(rect);
 
+		var scoreGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+		svg.appendChild(scoreGroup);
+		scoreGroup.addEventListener('mouseenter',view.displayScore);
+		scoreGroup.addEventListener('mouseleave',view.hideScore);
+		scoreGroup.addEventListener('click',view.toggleScore);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		scoreGroup.appendChild(rect);
 		rect.setAttribute('x',-90);
 		rect.setAttribute('y',50);
 		rect.setAttribute('width',12);
@@ -213,22 +224,93 @@ var view = {
 		rect.setAttribute('fill','silver');
 		rect.setAttribute('stroke','black');
 		rect.setAttribute('stroke-width',0.5);
-		shopGroup.appendChild(rect);
 		var icon = document.createElementNS('http://www.w3.org/2000/svg','use');
+		scoreGroup.appendChild(icon);
 		icon.setAttribute('href','#resourceVictoryPoint');
 		icon.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resourceVictoryPoint');
 		icon.setAttribute('x',-84);
 		icon.setAttribute('y',55.5);
 		icon.setAttribute('transform','translate(84,-55.5) scale(2)');
-		shopGroup.appendChild(icon);
 		var pointsDisplay = document.createElementNS('http://www.w3.org/2000/svg','text');
+		scoreGroup.appendChild(pointsDisplay);
 		pointsDisplay.id = 'pointsDisplay';
 		pointsDisplay.setAttribute('x',-84);
 		pointsDisplay.setAttribute('y',56.5);
 		pointsDisplay.setAttribute('text-anchor','middle');
 		pointsDisplay.setAttribute('font-size',3);
+		pointsDisplay.setAttribute('paint-order','stroke');
+		pointsDisplay.setAttribute('stroke','cyan');
+		pointsDisplay.setAttribute('stroke-width',0.5);
 		pointsDisplay.innerHTML = '1000';
-		shopGroup.appendChild(pointsDisplay);
+		var scoreDetailsGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+		scoreGroup.appendChild(scoreDetailsGroup);
+		scoreDetailsGroup.id = 'scoreDetailsGroup';
+		scoreDetailsGroup.setAttribute('visibility','hidden');
+		scoreDetailsGroup.setAttribute('font-size',3);
+		scoreDetailsGroup.setAttribute('text-anchor','end');
+		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		scoreDetailsGroup.appendChild(rect);
+		rect.setAttribute('x',-90);
+		rect.setAttribute('y',8);
+		rect.setAttribute('width',40);
+		rect.setAttribute('height',40);
+		rect.setAttribute('fill','silver');
+		rect.setAttribute('stroke','black');
+		rect.setAttribute('stroke-width',0.5);
+		var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+		scoreDetailsGroup.appendChild(text);
+		text.setAttribute('x',-70);
+		text.setAttribute('y',15);
+		text.setAttribute('font-size',5);
+		text.setAttribute('text-anchor','middle');
+		text.innerHTML = 'Points Details';
+		var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+		scoreDetailsGroup.appendChild(text);
+		text.setAttribute('x',-73);
+		text.setAttribute('y',20);
+		text.innerHTML = 'Victory';
+		var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+		scoreDetailsGroup.appendChild(text);
+		text.setAttribute('x',-73);
+		text.setAttribute('y',23);
+		text.innerHTML = 'Points';
+		var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+		scoreDetailsGroup.appendChild(text);
+		text.setAttribute('x',-73);
+		text.setAttribute('y',30);
+		text.innerHTML = 'Lifetime';
+		var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+		scoreDetailsGroup.appendChild(text);
+		text.setAttribute('x',-73);
+		text.setAttribute('y',33);
+		text.innerHTML = 'Efficiency';
+		var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+		scoreDetailsGroup.appendChild(text);
+		text.setAttribute('x',-73);
+		text.setAttribute('y',40);
+		text.innerHTML = 'Current';
+		var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+		scoreDetailsGroup.appendChild(text);
+		text.setAttribute('x',-73);
+		text.setAttribute('y',43);
+		text.innerHTML = 'Efficiency';
+		for (var i=0;i<3;i++) {
+			var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+			scoreDetailsGroup.appendChild(rect);
+			rect.setAttribute('x',-70);
+			rect.setAttribute('y',17 + i * 10);
+			rect.setAttribute('width',15);
+			rect.setAttribute('height',7);
+			rect.setAttribute('fill','white');
+			rect.setAttribute('stroke','black');
+			rect.setAttribute('stroke-width',0.5);
+			var text = document.createElementNS('http://www.w3.org/2000/svg','text');
+			scoreDetailsGroup.appendChild(text);
+			text.setAttribute('x',-57);
+			text.setAttribute('y',22 + i * 10);
+			text.innerHTML = 'XXX';
+			text.id = 'display' + ['VPS','LifetimeEfficiency','CurrentEfficiency'][i];
+		};
 		
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		rect.setAttribute('x',-75);
@@ -286,6 +368,7 @@ var view = {
 
 		var flush = document.createElementNS('http://www.w3.org/2000/svg','g');
 		shopGroup.appendChild(flush);
+		flush.id = 'flushPanel';
 		flush.addEventListener('click',handlers.flush);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		flush.appendChild(rect);
@@ -375,7 +458,7 @@ var view = {
 				var cx = lightCoordinates.x;
 				var cy = lightCoordinates.y;
 				inputLight.setAttribute('href','#resource'+part.inputs[i].icon);
-				inputLight.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+part.inputs[i].icon);
+				inputLight.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resource'+part.inputs[i].icon);
 				inputLight.setAttribute('x',cx );
 				inputLight.setAttribute('y',cy);
 				inputLight.setAttribute('fill',part.inputs[i].color);
@@ -391,7 +474,7 @@ var view = {
 				var cx = lightCoordinates.x;
 				var cy = lightCoordinates.y;
 				outputLight.setAttribute('href','#resource'+part.outputs[i].icon);
-				outputLight.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+part.outputs[i].icon);
+				outputLight.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#resource'+part.outputs[i].icon);
 				outputLight.setAttribute('x',cx );
 				outputLight.setAttribute('y',cy);
 				outputLight.setAttribute('fill',part.outputs[i].color);
@@ -583,6 +666,7 @@ var view = {
 			text.setAttribute('font-size',3);
 			text.setAttribute('fill','black');
 			text.setAttribute('stroke','cyan');
+			text.setAttribute('stroke-width',0.5);
 			text.setAttribute('paint-order','stroke');
 			text.innerHTML = design.victoryPoints;
 		} else {
@@ -625,6 +709,42 @@ var view = {
 		designScreen.setAttribute('fill','darkgray');
 		var designBtn = document.getElementById('designBtn');
 		designBtn.setAttribute('fill','darkgray'); 
+	},
+	
+	displayScore: function() {
+		document.getElementById('scoreDetailsGroup').setAttribute('visibility','visible');
+	},
+	
+	hideScore: function() {
+		document.getElementById('scoreDetailsGroup').setAttribute('visibility','hidden');
+	},
+	
+	toggleScore: function() {
+		if (view.options.scoreDisplay == 'VPS') {
+			view.options.scoreDisplay = 'lifetime';
+		} else if (view.options.scoreDisplay == 'lifetime') {
+			view.options.scoreDisplay = 'current';
+		} else {
+			view.options.scoreDisplay = 'VPS';
+		};
+	},
+	
+	displayScores: function(vps,lifetime,current) {
+		var pointsDisplay = document.getElementById('pointsDisplay');
+		document.getElementById('displayVPS').innerHTML = vps;
+		document.getElementById('displayLifetimeEfficiency').innerHTML = Math.round(lifetime*1000)/1000 + '/s';
+		document.getElementById('displayCurrentEfficiency').innerHTML = Math.round(current*1000)/1000 + '/s';
+		if (view.options.scoreDisplay == 'VPS') {
+			pointsDisplay.innerHTML = vps;
+			pointsDisplay.setAttribute('font-size',3);
+		} else if (view.options.scoreDisplay == 'lifetime') {
+			pointsDisplay.innerHTML = Math.round(lifetime*100)/100 + '/s';
+			pointsDisplay.setAttribute('font-size',2.5);
+		} else {
+			pointsDisplay.innerHTML = Math.round(current*100)/100 + '/s';
+			pointsDisplay.setAttribute('font-size',2.5);
+		};
+		
 	},
 
 };
